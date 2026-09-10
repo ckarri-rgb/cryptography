@@ -1,0 +1,95 @@
+def create_matrix(key):
+    key = key.upper().replace("J", "I")
+    alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+
+    letters = ""
+
+    for ch in key + alphabet:
+        if ch.isalpha() and ch not in letters:
+            letters += ch
+
+    matrix = []
+
+    for i in range(0, 25, 5):
+        matrix.append(list(letters[i:i + 5]))
+
+    return matrix
+
+
+def find_position(matrix, ch):
+    ch = ch.upper()
+
+    if ch == "J":
+        ch = "I"
+
+    for i in range(5):
+        for j in range(5):
+            if matrix[i][j] == ch:
+                return i, j
+
+
+def prepare_text(text):
+    text = ''.join(ch for ch in text.upper() if ch.isalpha())
+    text = text.replace("J", "I")
+
+    result = ""
+    i = 0
+
+    while i < len(text):
+        a = text[i]
+
+        if i + 1 < len(text):
+            b = text[i + 1]
+
+            if a == b:
+                result += a + "X"
+                i += 1
+            else:
+                result += a + b
+                i += 2
+        else:
+            result += a + "X"
+            i += 1
+
+    return result
+
+
+def playfair(text, matrix, decrypt=False):
+    result = ""
+    shift = -1 if decrypt else 1
+
+    for i in range(0, len(text), 2):
+        a = text[i]
+        b = text[i + 1]
+
+        r1, c1 = find_position(matrix, a)
+        r2, c2 = find_position(matrix, b)
+
+        if r1 == r2:
+            result += matrix[r1][(c1 + shift) % 5]
+            result += matrix[r2][(c2 + shift) % 5]
+
+        elif c1 == c2:
+            result += matrix[(r1 + shift) % 5][c1]
+            result += matrix[(r2 + shift) % 5][c2]
+
+        else:
+            result += matrix[r1][c2]
+            result += matrix[r2][c1]
+
+    return result
+
+
+key = input("Enter key: ")
+text = input("Enter message: ")
+
+matrix = create_matrix(key)
+prepared = prepare_text(text)
+
+print("Prepared:", prepared)
+
+encrypted = playfair(prepared, matrix)
+print("Encrypted:", encrypted)
+
+decrypted = playfair(encrypted, matrix, True)
+print("Decrypted:", decrypted)

@@ -1,0 +1,43 @@
+def encrypt(text, key):
+    result = ""
+
+    for ch in text:
+        if ch.isalpha():
+            pos = ord(ch.upper()) - 65
+            new = key[pos]
+
+            if ch.isupper():
+                result += new.upper()
+            else:
+                result += new.lower()
+        else:
+            result += ch
+
+    return result
+
+
+def decrypt(text, key):
+    result = ""
+
+    for ch in text:
+        if ch.isalpha():
+            pos = key.upper().index(ch.upper())
+
+            if ch.isupper():
+                result += chr(pos + 65)
+            else:
+                result += chr(pos + 97)
+        else:
+            result += ch
+
+    return result
+
+
+text = input("Enter message: ")
+key = input("Enter 26-letter key: ")
+
+encrypted = encrypt(text, key)
+print("Encrypted:", encrypted)
+
+decrypted = decrypt(encrypted, key)
+print("Decrypted:", decrypted)

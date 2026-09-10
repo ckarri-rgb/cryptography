@@ -1,0 +1,66 @@
+def get_order(key):
+    return sorted(range(len(key)), key=lambda i: (key[i], i))
+
+
+def encrypt(text, key):
+    columns = len(key)
+    order = get_order(key)
+
+    while len(text) % columns != 0:
+        text += "X"
+
+    result = ""
+
+    for col in order:
+        for i in range(col, len(text), columns):
+            result += text[i]
+
+    return result
+
+
+def decrypt(cipher, key):
+    columns = len(key)
+    rows = len(cipher) // columns
+    order = get_order(key)
+
+    matrix = [""] * rows
+    index = 0
+
+    for col in order:
+        for row in range(rows):
+            matrix[row] += cipher[index]
+            index += 1
+
+    # Reconstruct according to original column positions
+    result = [""] * len(cipher)
+
+    index = 0
+    for col in order:
+        for row in range(rows):
+            result[row * columns + col] = cipher[index]
+            index += 1
+
+    return ''.join(result)
+
+
+text = input("Enter message: ")
+text = ''.join(ch.upper() for ch in text if ch.isalpha())
+
+key1 = input("Enter first key: ").upper()
+key2 = input("Enter second key: ").upper()
+
+# First transposition
+step1 = encrypt(text, key1)
+
+# Second transposition
+encrypted = encrypt(step1, key2)
+
+print("Encrypted:", encrypted)
+
+# Reverse second transposition
+step2 = decrypt(encrypted, key2)
+
+# Reverse first transposition
+decrypted = decrypt(step2, key1)
+
+print("Decrypted:", decrypted)

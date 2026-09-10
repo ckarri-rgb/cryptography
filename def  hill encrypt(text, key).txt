@@ -1,0 +1,62 @@
+import math
+
+def inverse(a):
+    for i in range(26):
+        if (a * i) % 26 == 1:
+            return i
+    return -1
+
+
+def hill_encrypt(text, key):
+    text = ''.join(ch for ch in text.upper() if ch.isalpha())
+
+    if len(text) % 2 != 0:
+        text += 'X'
+
+    result = ""
+
+    for i in range(0, len(text), 2):
+        x = ord(text[i]) - 65
+        y = ord(text[i + 1]) - 65
+
+        p = (key[0][0] * x + key[0][1] * y) % 26
+        q = (key[1][0] * x + key[1][1] * y) % 26
+
+        result += chr(p + 65) + chr(q + 65)
+
+    return result
+
+
+def hill_decrypt(text, key):
+    a, b = key[0]
+    c, d = key[1]
+
+    det = (a * d - b * c) % 26
+    inv_det = inverse(det)
+
+    if inv_det == -1:
+        return "Invalid key matrix"
+
+    inverse_key = [
+        [(d * inv_det) % 26, (-b * inv_det) % 26],
+        [(-c * inv_det) % 26, (a * inv_det) % 26]
+    ]
+
+    return hill_encrypt(text, inverse_key)
+
+
+text = input("Enter message: ")
+
+print("Enter 2x2 key matrix:")
+a = int(input("a: "))
+b = int(input("b: "))
+c = int(input("c: "))
+d = int(input("d: "))
+
+key = [[a, b], [c, d]]
+
+encrypted = hill_encrypt(text, key)
+print("Encrypted:", encrypted)
+
+decrypted = hill_decrypt(encrypted, key)
+print("Decrypted:", decrypted)
