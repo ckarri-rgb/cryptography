@@ -1,4 +1,4 @@
-55
+
 a = int(input("Enter a: "))
 p = int(input("Enter a prime number p: "))
 
