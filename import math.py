@@ -1,4 +1,4 @@
-13import math
+import math
 
 n = int(input("Enter a positive integer: "))
 
